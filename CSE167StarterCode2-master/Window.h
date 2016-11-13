@@ -13,6 +13,7 @@
 #include "Cube.h"
 #include "Skybox.h"
 #include "shader.h"
+#include "BezierCurve.h"
 
 //from proj1
 #include <vector>
@@ -55,6 +56,8 @@ public:
 	static void translateCamera(glm::vec3 transVec);
 	static void rotateCamera(float rot_angle, glm::vec3 transVec);
 	static void resetCamera();
+
+	static void printMatrix(glm::mat4x3);
 
 };
 

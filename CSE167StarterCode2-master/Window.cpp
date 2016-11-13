@@ -3,6 +3,31 @@
 const char* window_title = "GLFW Starter Project";
 
 Skybox * skybox;
+BezierCurve * bezierCurve0;
+BezierCurve * bezierCurve1;
+BezierCurve * bezierCurve2;
+BezierCurve * bezierCurve3;
+BezierCurve * bezierCurve4;
+BezierCurve * bezierCurve5;
+BezierCurve * bezierCurve6;
+BezierCurve * bezierCurve7;
+BezierCurve * bezierCurve8;
+BezierCurve * bezierCurve9;
+
+//Vars for bezier curves
+const unsigned int N = 150;
+glm::vec3 p00, p01, p02, p03;
+glm::vec3 p10, p11, p12, p13;
+glm::vec3 p20, p21, p22, p23;
+glm::vec3 p30, p31, p32, p33;
+glm::vec3 p40, p41, p42, p43;
+glm::vec3 p50, p51, p52, p53;
+glm::vec3 p60, p61, p62, p63;
+glm::vec3 p70, p71, p72, p73;
+glm::vec3 p80, p81, p82, p83;
+glm::vec3 p90, p91, p92, p93;
+glm::mat4x3 controlPts0, controlPts1, controlPts2, controlPts3, controlPts4, controlPts5, controlPts6, controlPts7, controlPts8, controlPts9;
+
 GLint shaderProgram;
 GLint skyboxShaderProgram;
 
@@ -58,7 +83,86 @@ glm::vec3 lastPoint;
 
 void Window::initialize_objects()
 {
-	
+	//Bezier Curve 0
+	p00 = { 0.0f,0.0f,5.0f };
+	p01 = { 0.0f,5.0f,5.0f };
+	p02 = { 5.0f,5.0f,5.0f };
+	p03 = { 5.0f,0.0f,5.0f };
+	controlPts0 = { p00,p01,p02,p03 };
+	bezierCurve0 = new BezierCurve(N, controlPts0);
+
+	//Bezier Curve 1
+	p10 = { 5.0f,0.0f,5.0f };
+	p11 = { 5.0f,-5.0f,5.0f };
+	p12 = { 10.0f,-5.0f,0.0f };
+	p13 = { 10.0f,0.0f,0.0f };
+	controlPts1 = { p10,p11,p12,p13 };
+	bezierCurve1 = new BezierCurve(N, controlPts1);
+
+	//Bezier Curve 2
+	p20 = { 10.0f,0.0f,0.0f };
+	p21 = { 10.0f,5.0f,0.0f };
+	p22 = { 15.0f,5.0f,-5.0f };
+	p23 = { 15.0f,0.0f,-5.0f };
+	controlPts2 = { p20,p21,p22,p23 };
+	bezierCurve2 = new BezierCurve(N, controlPts2);
+
+	//Bezier Curve 3
+	p30 = { 15.0f,0.0f,-5.0f };
+	p31 = { 15.0f,-5.0f,-5.0f };
+	p32 = { 10.0f,-5.0f,-10.0f };
+	p33 = { 10.0f,0.0f,-10.0f };
+	controlPts3 = { p30,p31,p32,p33 };
+	bezierCurve3 = new BezierCurve(N, controlPts3);
+
+	//Bezier Curve 4
+	p40 = { 10.0f,0.0f,-10.0f };
+	p41 = { 10.0f,5.0f,-10.0f };
+	p42 = { 5.0f,5.0f,-15.0f };
+	p43 = { 5.0f,0.0f,-15.0f };
+	controlPts4 = { p40,p41,p42,p43 };
+	bezierCurve4 = new BezierCurve(N, controlPts4);
+
+	//Bezier Curve 5
+	p50 = { 5.0f,0.0f,-15.0f };
+	p51 = { 5.0f,-5.0f,-15.0f };
+	p52 = { 0.0f,-5.0f,-10.0f };
+	p53 = { 0.0f,0.0f,-10.0f };
+	controlPts5 = { p50,p51,p52,p53 };
+	bezierCurve5 = new BezierCurve(N, controlPts5);
+
+	//Bezier Curve 6
+	p60 = { 0.0f,0.0f,-10.0f };
+	p61 = { 0.0f,5.0f,-10.0f };
+	p62 = { -5.0f,5.0f,-5.0f };
+	p63 = { -5.0f,0.0f,-5.0f };
+	controlPts6 = { p60,p61,p62,p63 };
+	bezierCurve6 = new BezierCurve(N, controlPts6);
+
+	//Bezier Curve 7
+	p70 = { -5.0f,0.0f,-5.0f };
+	p71 = { -5.0f,-5.0f,-5.0f };
+	p72 = { -10.0f,-5.0f,0.0f };
+	p73 = { -10.0f,0.0f,0.0f };
+	controlPts7 = { p70,p71,p72,p73 };
+	bezierCurve7 = new BezierCurve(N, controlPts7);
+
+	//Bezier Curve 8
+	p80 = { -10.0f,0.0f,0.0f };
+	p81 = { -10.0f,5.0f,0.0f };
+	p82 = { -5.0f,5.0f,5.0f };
+	p83 = { -5.0f,0.0f,5.0f };
+	controlPts8 = { p80,p81,p82,p83 };
+	bezierCurve8 = new BezierCurve(N, controlPts8);
+
+	//Bezier Curve 9
+	p90 = { -5.0f,0.0f,5.0f };
+	p91 = { -5.0f,-5.0f,5.0f };
+	p92 = { 0.0f,-5.0f,5.0f };
+	p93 = { 0.0f,0.0f,5.0f };
+	controlPts9 = { p90,p91,p92,p93 };
+	bezierCurve9 = new BezierCurve(N, controlPts9);
+
 	// Load the shader program. Make sure you have the correct filepath up top
 	shaderProgram = LoadShaders(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
 	skyboxShaderProgram = LoadShaders(SKYBOX_VERTEX_SHADER_PATH, SKYBOX_FRAGMENT_SHADER_PATH);
@@ -139,8 +243,7 @@ void Window::resize_callback(GLFWwindow* window, int width, int height)
 
 void Window::idle_callback()
 {
-	// Call the update function the cube
-	//cube->update();
+	//bezierCurve0 ->update();
 }
 
 void Window::display_callback(GLFWwindow* window)
@@ -148,13 +251,31 @@ void Window::display_callback(GLFWwindow* window)
 	// Clear the color and depth buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
 	// Use the shader of programID
 	glUseProgram(skyboxShaderProgram);
 
 	// Render the skybox
 	skybox->draw(skyboxShaderProgram);
+
 	// Use the shader of programID
 	glUseProgram(shaderProgram);
+
+	glPointSize(100.0f);
+	// Render Bezier Curve
+	bezierCurve0->draw(shaderProgram);
+	bezierCurve1->draw(shaderProgram);
+	bezierCurve2->draw(shaderProgram);
+	bezierCurve3->draw(shaderProgram);
+	bezierCurve4->draw(shaderProgram);
+	bezierCurve5->draw(shaderProgram);
+	bezierCurve6->draw(shaderProgram);
+	bezierCurve7->draw(shaderProgram);
+	bezierCurve8->draw(shaderProgram);
+	bezierCurve9->draw(shaderProgram);
+
+
+
 	
 	// Gets events, including input such as keyboard and mouse or window resizing
 	glfwPollEvents();
@@ -363,4 +484,17 @@ void Window::rotateCamera(float rot_angle, glm::vec3 rotAxis) {
 
 void Window::resetCamera() {
 	V = glm::lookAt(cam_pos, cam_look_at, cam_up);	
+}
+
+void Window::printMatrix(glm::mat4x3 mat) {
+
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			cout << mat[j][i] << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;
 }
