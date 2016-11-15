@@ -14,6 +14,8 @@
 #include "Skybox.h"
 #include "shader.h"
 #include "BezierCurve.h"
+#include "AnchorPoints.h"
+#include "PullPoints.h"
 
 //from proj1
 #include <vector>

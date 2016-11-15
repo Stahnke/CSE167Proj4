@@ -22,6 +22,8 @@ public:
 	BezierCurve(unsigned int N, glm::mat4x3 controlPts);
 	~BezierCurve();
 
+	glm::vec3 color;
+
 	glm::mat4 toWorld;
 
 	void draw(GLuint);

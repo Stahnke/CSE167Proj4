@@ -13,6 +13,8 @@ BezierCurve * bezierCurve6;
 BezierCurve * bezierCurve7;
 BezierCurve * bezierCurve8;
 BezierCurve * bezierCurve9;
+AnchorPoints * anchorPointsObj;
+PullPoints * pullPointsObj;
 
 //Vars for bezier curves
 const unsigned int N = 150;
@@ -27,6 +29,8 @@ glm::vec3 p70, p71, p72, p73;
 glm::vec3 p80, p81, p82, p83;
 glm::vec3 p90, p91, p92, p93;
 glm::mat4x3 controlPts0, controlPts1, controlPts2, controlPts3, controlPts4, controlPts5, controlPts6, controlPts7, controlPts8, controlPts9;
+vector <glm::vec3> anchorPoints;
+vector <glm::vec3> pullPoints;
 
 GLint shaderProgram;
 GLint skyboxShaderProgram;
@@ -83,6 +87,9 @@ glm::vec3 lastPoint;
 
 void Window::initialize_objects()
 {
+
+	//Bezier Curves
+
 	//Bezier Curve 0
 	p00 = { 0.0f,0.0f,5.0f };
 	p01 = { 0.0f,5.0f,5.0f };
@@ -162,6 +169,52 @@ void Window::initialize_objects()
 	p93 = { 0.0f,0.0f,5.0f };
 	controlPts9 = { p90,p91,p92,p93 };
 	bezierCurve9 = new BezierCurve(N, controlPts9);
+
+	//Anchor Points
+	anchorPoints.push_back(p00);
+	anchorPoints.push_back(p03);
+	anchorPoints.push_back(p10);
+	anchorPoints.push_back(p13);
+	anchorPoints.push_back(p20);
+	anchorPoints.push_back(p23);
+	anchorPoints.push_back(p30);
+	anchorPoints.push_back(p33);
+	anchorPoints.push_back(p40);
+	anchorPoints.push_back(p43);
+	anchorPoints.push_back(p50);
+	anchorPoints.push_back(p53);
+	anchorPoints.push_back(p60);
+	anchorPoints.push_back(p63);
+	anchorPoints.push_back(p70);
+	anchorPoints.push_back(p73);
+	anchorPoints.push_back(p80);
+	anchorPoints.push_back(p83);
+	anchorPoints.push_back(p90);
+	anchorPoints.push_back(p93);
+	anchorPointsObj = new AnchorPoints(anchorPoints);
+
+	//Pull Points
+	pullPoints.push_back(p01);
+	pullPoints.push_back(p02);
+	pullPoints.push_back(p11);
+	pullPoints.push_back(p12);
+	pullPoints.push_back(p21);
+	pullPoints.push_back(p22);
+	pullPoints.push_back(p31);
+	pullPoints.push_back(p32);
+	pullPoints.push_back(p41);
+	pullPoints.push_back(p42);
+	pullPoints.push_back(p51);
+	pullPoints.push_back(p52);
+	pullPoints.push_back(p61);
+	pullPoints.push_back(p62);
+	pullPoints.push_back(p71);
+	pullPoints.push_back(p72);
+	pullPoints.push_back(p81);
+	pullPoints.push_back(p82);
+	pullPoints.push_back(p91);
+	pullPoints.push_back(p92);
+	pullPointsObj = new PullPoints(pullPoints);
 
 	// Load the shader program. Make sure you have the correct filepath up top
 	shaderProgram = LoadShaders(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
@@ -274,6 +327,10 @@ void Window::display_callback(GLFWwindow* window)
 	bezierCurve8->draw(shaderProgram);
 	bezierCurve9->draw(shaderProgram);
 
+	// Render Anchor Points
+	anchorPointsObj->draw(shaderProgram);
+	// Render Pull Points
+	pullPointsObj->draw(shaderProgram);
 
 
 	

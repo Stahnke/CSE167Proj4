@@ -9,6 +9,8 @@ BezierCurve::BezierCurve(unsigned int N, glm::mat4x3 controlPts) : N(N), control
 {
 	toWorld = glm::mat4(1.0f);
 
+	color = { 0.0f,0.0f,0.0f };
+
 	//Calculate the curve on instantiation
 	calcBezierCurve();
 
@@ -53,7 +55,7 @@ BezierCurve::~BezierCurve()
 
 void BezierCurve::draw(GLuint shaderProgram)
 { 
-	glm::mat4 modelview = Window::V * toWorld;
+	glm::mat4 modelview = Window::V * toWorld;	
 
 	uProjection = glGetUniformLocation(shaderProgram, "projection");
 	uModelview = glGetUniformLocation(shaderProgram, "modelview");
@@ -61,8 +63,10 @@ void BezierCurve::draw(GLuint shaderProgram)
 	glUniformMatrix4fv(uProjection, 1, GL_FALSE, &Window::P[0][0]);
 	glUniformMatrix4fv(uModelview, 1, GL_FALSE, &modelview[0][0]);
 
-	glBindVertexArray(bezierVAO);
+	GLuint uColorLoc = glGetUniformLocation(shaderProgram, "myColor");
+	glUniform3f(uColorLoc, color.x, color.y, color.z);
 
+	glBindVertexArray(bezierVAO);
 	
 	glDrawElements(GL_LINES, bezierIndices.size(), GL_UNSIGNED_INT, 0);
 	

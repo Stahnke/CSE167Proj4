@@ -33,6 +33,12 @@
     <ClInclude Include="..\BezierCurve.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\AnchorPoints.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\PullPoints.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shader.cpp">
@@ -51,6 +57,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\BezierCurve.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AnchorPoints.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\PullPoints.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
