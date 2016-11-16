@@ -26,6 +26,7 @@ public:
 	void draw(GLuint);
 	void update();
 	void spin(float);
+	void setPosition(glm::vec3 position);
 
 	// These variables are needed for the shader program
 	GLuint VBO, VAO, EBO;
@@ -37,9 +38,9 @@ public:
 // This just looks nicer since it's easy to tell what coordinates/indices belong where.
 const GLfloat vertices[8][3] = {
 	// "Front" vertices
-	{-2.0, -2.0,  2.0}, {2.0, -2.0,  2.0}, {2.0,  2.0,  2.0}, {-2.0,  2.0,  2.0},
+	{-0.5, -0.5,  0.5}, {0.5, -0.5,  0.5}, {0.5,  0.5,  0.5}, {-0.5,  0.5,  0.5},
 	// "Back" vertices
-	{-2.0, -2.0, -2.0}, {2.0, -2.0, -2.0}, {2.0,  2.0, -2.0}, {-2.0,  2.0, -2.0}
+	{-0.5, -0.5, -0.5}, {0.5, -0.5, -0.5}, {0.5,  0.5, -0.5}, {-0.5,  0.5, -0.5}
 };
 
 // Note that GL_QUADS is deprecated in modern OpenGL (and removed from OSX systems).

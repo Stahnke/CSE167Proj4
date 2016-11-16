@@ -81,3 +81,8 @@ void Cube::spin(float deg)
 	toWorld = toWorld * glm::rotate(glm::mat4(1.0f), 1.0f / 180.0f * glm::pi<float>(), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
+void Cube::setPosition(glm::vec3 position)
+{
+	toWorld = glm::translate(glm::mat4(1.0f), position);
+}
+

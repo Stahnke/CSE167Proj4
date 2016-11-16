@@ -3,6 +3,7 @@
 const char* window_title = "GLFW Starter Project";
 
 Skybox * skybox;
+Cube * cube;
 BezierCurve * bezierCurve0, * bezierCurve1, * bezierCurve2, * bezierCurve3, * bezierCurve4, * bezierCurve5;
 BezierCurve * bezierCurve6, * bezierCurve7, * bezierCurve8, * bezierCurve9;
 AnchorPoint * anchorPoint0, * anchorPoint1, * anchorPoint2, * anchorPoint3, * anchorPoint4, * anchorPoint5;
@@ -16,6 +17,13 @@ vector<AnchorPoint *> points;
 vector<BezierCurve *> curves;
 vector<AnchorLines *> lines;
 unsigned char pix[4];
+
+float a = 0.000001f;
+float c = 0.001f;
+float maxHeight = std::numeric_limits<int>::min();
+float currentHeight = std::numeric_limits<int>::min();
+float maxT = 0.0f;
+float currentT = 0.0f;
 
 glm::mat4x3 ret;
 
@@ -301,6 +309,28 @@ void Window::initialize_objects()
 	lines.push_back(anchorLines8);
 	lines.push_back(anchorLines9);
 
+	//recalculate maxHeight
+	int i = 0;
+	maxHeight = std::numeric_limits<int>::min();
+	for each (BezierCurve * curve in curves) {
+		if (curve->getMaxHeight()[0] > maxHeight)
+		{
+			maxHeight = curve->getMaxHeight()[0];
+			maxT = curve->getMaxHeight()[1] + i;
+		}
+		i++;
+	}
+	//cout <<"MaxHeight = " << maxHeight << "@ " << maxT << endl;
+
+	//OBJECT POSITION SHOULD BE EQUAL TO C(maxT) on initialization
+	//TODO:
+	currentHeight = maxHeight;
+	currentT = maxT;
+	cube = new Cube();
+	glm::vec3 newPoint = curves[(int)maxT]->calcBezierPoint(maxT - (int)maxT);
+	cube->setPosition(newPoint);
+	
+
 	// Load the shader program. Make sure you have the correct filepath up top
 	shaderProgram = LoadShaders(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
 	skyboxShaderProgram = LoadShaders(SKYBOX_VERTEX_SHADER_PATH, SKYBOX_FRAGMENT_SHADER_PATH);
@@ -382,7 +412,22 @@ void Window::resize_callback(GLFWwindow* window, int width, int height)
 
 void Window::idle_callback()
 {
-	//bezierCurve0 ->update();
+	
+	//Update the position of the cube
+	float v = std::sqrt(((-2) * a * (currentHeight - maxHeight))) + c;
+	if (currentHeight - maxHeight > 0)
+	{
+		//cout << "CALCULATION ERROR" << endl;
+		v = 0 + c;
+	}
+
+	currentT += v;
+	if (currentT > curves.size() || currentT < 0)
+		currentT = 0;
+	//cout << currentT << endl;
+	glm::vec3 newPoint = curves[(int)currentT]->calcBezierPoint(currentT - (int)currentT);
+	currentHeight = newPoint.y;
+	cube->setPosition(newPoint);
 }
 
 void Window::display_callback(GLFWwindow* window)
@@ -419,6 +464,8 @@ void Window::display_callback(GLFWwindow* window)
 
 	for each (AnchorLines * line in lines)
 		line->draw(shaderProgram);
+
+	cube->draw(shaderProgram);
 	
 	glPointSize(1.0f);
 	
@@ -596,7 +643,7 @@ void Window::mouse_button_callback(GLFWwindow * window, int button, int action, 
 			selectionDraw();
 
 			glReadPixels(point.x, height - point.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pix);
-			cout << (unsigned int) pix[0] << endl;
+			//cout << (unsigned int) pix[0] << endl;
 
 			if ((unsigned int)pix[0] < selections.size())
 			{
@@ -773,6 +820,19 @@ void Window::translateSelection(glm::vec3 transVec) {
 			}
 		}
 	}
+
+	//recalculate maxHeight
+	int i = 0;
+	maxHeight = std::numeric_limits<int>::min();
+	for each (BezierCurve * curve in curves) {
+		if (curve->getMaxHeight()[0] > maxHeight)
+		{
+			maxHeight = curve->getMaxHeight()[0];
+			maxT = curve->getMaxHeight()[1] + i;
+		}
+		i++;
+	}
+	//cout <<"MaxHeight = " << maxHeight << "@ " << maxT << endl;
 }
 
 void Window::remakePoints() {

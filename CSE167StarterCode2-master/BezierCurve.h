@@ -29,6 +29,9 @@ public:
 	void draw(GLuint);
 	void update(glm::mat4x3 newPoints);
 
+	float maxHeight;
+	float maxT;
+
 	// These variables are needed for the shader program
 	GLuint bezierVBO, bezierVAO, bezierEBO;
 	GLuint uProjection, uModelview;
@@ -42,6 +45,7 @@ public:
 	glm::vec3 calcBezierPoint(const float t);
 	void calcBezierCurve();
 	float calcChoose(unsigned int n, unsigned int k);
+	glm::vec2 getMaxHeight();
 };
 
 #endif

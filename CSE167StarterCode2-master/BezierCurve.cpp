@@ -12,6 +12,9 @@ BezierCurve::BezierCurve(unsigned int N, glm::mat4x3 controlPts) : N(N), control
 {
 	toWorld = glm::mat4(1.0f);
 
+	maxHeight = std::numeric_limits<int>::min();
+	maxT = 0;
+
 	color = { 0.0f,0.0f,0.0f };
 
 	//Calculate the curve on instantiation
@@ -78,6 +81,8 @@ void BezierCurve::draw(GLuint shaderProgram)
 
 void BezierCurve::update(glm::mat4x3 newPoints)
 {
+
+	maxHeight = std::numeric_limits<int>::min();
 	controlPts = newPoints;
 	calcBezierCurve();
 
@@ -149,6 +154,11 @@ void BezierCurve::calcBezierCurve() {
 		
 		//Get the Bezier Point at t = n / N
 		curBezierPoint = calcBezierPoint(((float)n) / N);
+		if (curBezierPoint.y > maxHeight) 
+		{
+			maxHeight = curBezierPoint.y;
+			maxT = ((float)n / N);
+		}
 		//Store the point in our vertices container
 		curveVertices.push_back(curBezierPoint);
 
@@ -187,5 +197,9 @@ float BezierCurve::calcChoose(unsigned int n, unsigned int k) {
 
 	return n_choose_k;
 	
+}
+
+glm::vec2 BezierCurve::getMaxHeight() {
+	return{ maxHeight, maxT };
 }
 
