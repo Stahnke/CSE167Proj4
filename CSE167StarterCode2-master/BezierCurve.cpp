@@ -4,6 +4,9 @@
 vector <glm::vec3> bezierVertices;
 vector <unsigned int> bezierIndices;
 bool DEBUG = false;
+vector <glm::vec3> curveVertices;	//Vector for our vertices to draw the curve
+vector <unsigned int> curveIndices; //Vecotr for our indices to draw at
+glm::vec3 curBezierPoint;			//The current Bezier Point, we will use 2 at a time to draw a segment, and draw all segments to make the curve
 
 BezierCurve::BezierCurve(unsigned int N, glm::mat4x3 controlPts) : N(N), controlPts(controlPts)
 {
@@ -73,10 +76,26 @@ void BezierCurve::draw(GLuint shaderProgram)
 	glBindVertexArray(0);
 }
 
-void BezierCurve::update()
+void BezierCurve::update(glm::mat4x3 newPoints)
 {
-	//Recalculate the curve anytime we update the parameters
+	controlPts = newPoints;
 	calcBezierCurve();
+
+	glBindVertexArray(bezierVAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, bezierVBO);
+
+	glBufferData(GL_ARRAY_BUFFER, bezierVertices.size() * sizeof(glm::vec3), &bezierVertices[0], GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bezierEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, bezierIndices.size() * sizeof(unsigned int), &bezierIndices[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindVertexArray(0);
 }
 
 
@@ -117,9 +136,8 @@ glm::vec3 BezierCurve::calcBezierPoint(const float t) {
 
 void BezierCurve::calcBezierCurve() {
 
-	vector <glm::vec3> curveVertices;	//Vector for our vertices to draw the curve
-	vector <unsigned int> curveIndices; //Vecotr for our indices to draw at
-	glm::vec3 curBezierPoint;			//The current Bezier Point, we will use 2 at a time to draw a segment, and draw all segments to make the curve
+	curveVertices.clear();	//Vector for our vertices to draw the curve
+	curveIndices.clear(); //Vecotr for our indices to draw at
 
 	//N = number of segments to draw for the curve
 

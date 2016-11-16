@@ -27,7 +27,7 @@ public:
 	glm::mat4 toWorld;
 
 	void draw(GLuint);
-	void update();
+	void update(glm::mat4x3 newPoints);
 
 	// These variables are needed for the shader program
 	GLuint bezierVBO, bezierVAO, bezierEBO;

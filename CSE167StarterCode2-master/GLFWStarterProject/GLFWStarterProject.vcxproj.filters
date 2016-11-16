@@ -33,10 +33,13 @@
     <ClInclude Include="..\BezierCurve.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\AnchorPoints.h">
+    <ClInclude Include="..\AnchorPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\PullPoints.h">
+    <ClInclude Include="..\PullPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AnchorLines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -59,10 +62,13 @@
     <ClCompile Include="..\BezierCurve.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\AnchorPoints.cpp">
+    <ClCompile Include="..\AnchorPoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\PullPoints.cpp">
+    <ClCompile Include="..\PullPoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\AnchorLines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -78,6 +84,12 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="..\skyboxShader.vert">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\selectionShader.vert">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\selectionShader.frag">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

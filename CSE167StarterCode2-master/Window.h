@@ -14,8 +14,8 @@
 #include "Skybox.h"
 #include "shader.h"
 #include "BezierCurve.h"
-#include "AnchorPoints.h"
-#include "PullPoints.h"
+#include "AnchorPoint.h"
+#include "AnchorLines.h"
 
 //from proj1
 #include <vector>
@@ -48,6 +48,7 @@ public:
 	static void resize_callback(GLFWwindow* window, int width, int height);
 	static void idle_callback();
 	static void display_callback(GLFWwindow*);
+	static void selectionDraw();
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 	static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
@@ -58,6 +59,10 @@ public:
 	static void translateCamera(glm::vec3 transVec);
 	static void rotateCamera(float rot_angle, glm::vec3 transVec);
 	static void resetCamera();
+
+	static void translateSelection(glm::vec3 transVec);
+	static void remakePoints();
+	static glm::mat4x3 findPointsInCurve(unsigned int curveNum);
 
 	static void printMatrix(glm::mat4x3);
 

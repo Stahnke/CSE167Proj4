@@ -3,37 +3,44 @@
 const char* window_title = "GLFW Starter Project";
 
 Skybox * skybox;
-BezierCurve * bezierCurve0;
-BezierCurve * bezierCurve1;
-BezierCurve * bezierCurve2;
-BezierCurve * bezierCurve3;
-BezierCurve * bezierCurve4;
-BezierCurve * bezierCurve5;
-BezierCurve * bezierCurve6;
-BezierCurve * bezierCurve7;
-BezierCurve * bezierCurve8;
-BezierCurve * bezierCurve9;
-AnchorPoints * anchorPointsObj;
-PullPoints * pullPointsObj;
+BezierCurve * bezierCurve0, * bezierCurve1, * bezierCurve2, * bezierCurve3, * bezierCurve4, * bezierCurve5;
+BezierCurve * bezierCurve6, * bezierCurve7, * bezierCurve8, * bezierCurve9;
+AnchorPoint * anchorPoint0, * anchorPoint1, * anchorPoint2, * anchorPoint3, * anchorPoint4, * anchorPoint5;
+AnchorPoint * anchorPoint6, * anchorPoint7, * anchorPoint8, * anchorPoint9, * anchorPoint10, * anchorPoint11;
+AnchorPoint * anchorPoint12, * anchorPoint13, * anchorPoint14, * anchorPoint15, * anchorPoint16, * anchorPoint17;
+AnchorPoint * anchorPoint18, * anchorPoint19, * anchorPoint20, * anchorPoint21, * anchorPoint22, * anchorPoint23;
+AnchorPoint * anchorPoint24, * anchorPoint25, * anchorPoint26, * anchorPoint27, * anchorPoint28, * anchorPoint29;
+AnchorLines * anchorLines0, *anchorLines1, *anchorLines2, *anchorLines3, *anchorLines4, *anchorLines5, *anchorLines6;
+AnchorLines  * anchorLines7, * anchorLines8, *anchorLines9, *anchorLines10;
+vector<AnchorPoint *> points;
+vector<BezierCurve *> curves;
+vector<AnchorLines *> lines;
+unsigned char pix[4];
+
+glm::mat4x3 ret;
+
+const unsigned int RED = 0;
+const unsigned int YELLOW = 1;
 
 //Vars for bezier curves
 const unsigned int N = 150;
 glm::vec3 p00, p01, p02, p03;
-glm::vec3 p10, p11, p12, p13;
-glm::vec3 p20, p21, p22, p23;
-glm::vec3 p30, p31, p32, p33;
-glm::vec3 p40, p41, p42, p43;
-glm::vec3 p50, p51, p52, p53;
-glm::vec3 p60, p61, p62, p63;
-glm::vec3 p70, p71, p72, p73;
-glm::vec3 p80, p81, p82, p83;
-glm::vec3 p90, p91, p92, p93;
+glm::vec3 p11, p12, p13;
+glm::vec3 p21, p22, p23;
+glm::vec3 p31, p32, p33;
+glm::vec3 p41, p42, p43;
+glm::vec3 p51, p52, p53;
+glm::vec3 p61, p62, p63;
+glm::vec3 p71, p72, p73;
+glm::vec3 p81, p82, p83;
+glm::vec3 p91, p92;
 glm::mat4x3 controlPts0, controlPts1, controlPts2, controlPts3, controlPts4, controlPts5, controlPts6, controlPts7, controlPts8, controlPts9;
-vector <glm::vec3> anchorPoints;
-vector <glm::vec3> pullPoints;
 
+vector<glm::vec3> selections;
+glm::vec3 selected;
 GLint shaderProgram;
 GLint skyboxShaderProgram;
+GLint selectionShaderProgram;
 
 // On some systems you need to change this to the absolute path
 #define VERTEX_SHADER_PATH "../shader.vert"
@@ -41,6 +48,9 @@ GLint skyboxShaderProgram;
 
 #define SKYBOX_VERTEX_SHADER_PATH "../skyboxShader.vert"
 #define SKYBOX_FRAGMENT_SHADER_PATH "../skyboxShader.frag"
+
+#define SELECTION_VERTEX_SHADER_PATH "../selectionShader.vert"
+#define SELECTION_FRAGMENT_SHADER_PATH "../selectionShader.frag"
 
 // Default camera parameters
 glm::vec3 cam_pos(0.0f, 0.0f, 20.0f);		// e  | Position of camera
@@ -81,6 +91,7 @@ const float m_TRANSSCALE = 0.1f;
 
 int Mode = 1;
 const int CAMERA = 1;
+const int SELECTION = 2;
 
 glm::vec2 mouse_point;
 glm::vec3 lastPoint;
@@ -99,126 +110,201 @@ void Window::initialize_objects()
 	bezierCurve0 = new BezierCurve(N, controlPts0);
 
 	//Bezier Curve 1
-	p10 = { 5.0f,0.0f,5.0f };
 	p11 = { 5.0f,-5.0f,5.0f };
 	p12 = { 10.0f,-5.0f,0.0f };
 	p13 = { 10.0f,0.0f,0.0f };
-	controlPts1 = { p10,p11,p12,p13 };
+	controlPts1 = { p03,p11,p12,p13 };
 	bezierCurve1 = new BezierCurve(N, controlPts1);
 
 	//Bezier Curve 2
-	p20 = { 10.0f,0.0f,0.0f };
 	p21 = { 10.0f,5.0f,0.0f };
 	p22 = { 15.0f,5.0f,-5.0f };
 	p23 = { 15.0f,0.0f,-5.0f };
-	controlPts2 = { p20,p21,p22,p23 };
+	controlPts2 = { p13,p21,p22,p23 };
 	bezierCurve2 = new BezierCurve(N, controlPts2);
 
 	//Bezier Curve 3
-	p30 = { 15.0f,0.0f,-5.0f };
 	p31 = { 15.0f,-5.0f,-5.0f };
 	p32 = { 10.0f,-5.0f,-10.0f };
 	p33 = { 10.0f,0.0f,-10.0f };
-	controlPts3 = { p30,p31,p32,p33 };
+	controlPts3 = { p23,p31,p32,p33 };
 	bezierCurve3 = new BezierCurve(N, controlPts3);
 
 	//Bezier Curve 4
-	p40 = { 10.0f,0.0f,-10.0f };
 	p41 = { 10.0f,5.0f,-10.0f };
 	p42 = { 5.0f,5.0f,-15.0f };
 	p43 = { 5.0f,0.0f,-15.0f };
-	controlPts4 = { p40,p41,p42,p43 };
+	controlPts4 = { p33,p41,p42,p43 };
 	bezierCurve4 = new BezierCurve(N, controlPts4);
 
 	//Bezier Curve 5
-	p50 = { 5.0f,0.0f,-15.0f };
 	p51 = { 5.0f,-5.0f,-15.0f };
 	p52 = { 0.0f,-5.0f,-10.0f };
 	p53 = { 0.0f,0.0f,-10.0f };
-	controlPts5 = { p50,p51,p52,p53 };
+	controlPts5 = { p43,p51,p52,p53 };
 	bezierCurve5 = new BezierCurve(N, controlPts5);
 
 	//Bezier Curve 6
-	p60 = { 0.0f,0.0f,-10.0f };
 	p61 = { 0.0f,5.0f,-10.0f };
 	p62 = { -5.0f,5.0f,-5.0f };
 	p63 = { -5.0f,0.0f,-5.0f };
-	controlPts6 = { p60,p61,p62,p63 };
+	controlPts6 = { p53,p61,p62,p63 };
 	bezierCurve6 = new BezierCurve(N, controlPts6);
 
 	//Bezier Curve 7
-	p70 = { -5.0f,0.0f,-5.0f };
 	p71 = { -5.0f,-5.0f,-5.0f };
 	p72 = { -10.0f,-5.0f,0.0f };
 	p73 = { -10.0f,0.0f,0.0f };
-	controlPts7 = { p70,p71,p72,p73 };
+	controlPts7 = { p63,p71,p72,p73 };
 	bezierCurve7 = new BezierCurve(N, controlPts7);
 
 	//Bezier Curve 8
-	p80 = { -10.0f,0.0f,0.0f };
 	p81 = { -10.0f,5.0f,0.0f };
 	p82 = { -5.0f,5.0f,5.0f };
 	p83 = { -5.0f,0.0f,5.0f };
-	controlPts8 = { p80,p81,p82,p83 };
+	controlPts8 = { p73,p81,p82,p83 };
 	bezierCurve8 = new BezierCurve(N, controlPts8);
 
 	//Bezier Curve 9
-	p90 = { -5.0f,0.0f,5.0f };
 	p91 = { -5.0f,-5.0f,5.0f };
 	p92 = { 0.0f,-5.0f,5.0f };
-	p93 = { 0.0f,0.0f,5.0f };
-	controlPts9 = { p90,p91,p92,p93 };
+	controlPts9 = { p83,p91,p92,p00 };
 	bezierCurve9 = new BezierCurve(N, controlPts9);
 
-	//Anchor Points
-	anchorPoints.push_back(p00);
-	anchorPoints.push_back(p03);
-	anchorPoints.push_back(p10);
-	anchorPoints.push_back(p13);
-	anchorPoints.push_back(p20);
-	anchorPoints.push_back(p23);
-	anchorPoints.push_back(p30);
-	anchorPoints.push_back(p33);
-	anchorPoints.push_back(p40);
-	anchorPoints.push_back(p43);
-	anchorPoints.push_back(p50);
-	anchorPoints.push_back(p53);
-	anchorPoints.push_back(p60);
-	anchorPoints.push_back(p63);
-	anchorPoints.push_back(p70);
-	anchorPoints.push_back(p73);
-	anchorPoints.push_back(p80);
-	anchorPoints.push_back(p83);
-	anchorPoints.push_back(p90);
-	anchorPoints.push_back(p93);
-	anchorPointsObj = new AnchorPoints(anchorPoints);
 
-	//Pull Points
-	pullPoints.push_back(p01);
-	pullPoints.push_back(p02);
-	pullPoints.push_back(p11);
-	pullPoints.push_back(p12);
-	pullPoints.push_back(p21);
-	pullPoints.push_back(p22);
-	pullPoints.push_back(p31);
-	pullPoints.push_back(p32);
-	pullPoints.push_back(p41);
-	pullPoints.push_back(p42);
-	pullPoints.push_back(p51);
-	pullPoints.push_back(p52);
-	pullPoints.push_back(p61);
-	pullPoints.push_back(p62);
-	pullPoints.push_back(p71);
-	pullPoints.push_back(p72);
-	pullPoints.push_back(p81);
-	pullPoints.push_back(p82);
-	pullPoints.push_back(p91);
-	pullPoints.push_back(p92);
-	pullPointsObj = new PullPoints(pullPoints);
+	//Add all points to selection buffer
+	selections.push_back(p00);
+	selections.push_back(p01);
+	selections.push_back(p02);
+	selections.push_back(p03);
+	selections.push_back(p11);
+	selections.push_back(p12);
+	selections.push_back(p13);
+	selections.push_back(p21);
+	selections.push_back(p22);
+	selections.push_back(p23);
+	selections.push_back(p31);
+	selections.push_back(p32);
+	selections.push_back(p33);
+	selections.push_back(p41);
+	selections.push_back(p42);
+	selections.push_back(p43);
+	selections.push_back(p51);
+	selections.push_back(p52);
+	selections.push_back(p53);
+	selections.push_back(p61);
+	selections.push_back(p62);
+	selections.push_back(p63);
+	selections.push_back(p71);
+	selections.push_back(p72);
+	selections.push_back(p73);
+	selections.push_back(p81);
+	selections.push_back(p82);
+	selections.push_back(p83);
+	selections.push_back(p91);
+	selections.push_back(p92);
+	
+	//Add all curves to curve list
+	curves.push_back(bezierCurve0);
+	curves.push_back(bezierCurve1);
+	curves.push_back(bezierCurve2);
+	curves.push_back(bezierCurve3);
+	curves.push_back(bezierCurve4);
+	curves.push_back(bezierCurve5);
+	curves.push_back(bezierCurve6);
+	curves.push_back(bezierCurve7);
+	curves.push_back(bezierCurve8);
+	curves.push_back(bezierCurve9);
+
+	//Anchor Points
+	anchorPoint0 = new AnchorPoint(p00, 0, RED);
+	anchorPoint1 = new AnchorPoint(p01, 1, YELLOW);
+	anchorPoint2 = new AnchorPoint(p02, 2, YELLOW);
+	anchorPoint3 = new AnchorPoint(p03, 3, RED);
+	anchorPoint4 = new AnchorPoint(p11, 4, YELLOW);
+	anchorPoint5 = new AnchorPoint(p12, 5, YELLOW);
+	anchorPoint6 = new AnchorPoint(p13, 6, RED);
+	anchorPoint7 = new AnchorPoint(p21, 7, YELLOW);
+	anchorPoint8 = new AnchorPoint(p22, 8, YELLOW);
+	anchorPoint9 = new AnchorPoint(p23, 9, RED);
+	anchorPoint10 = new AnchorPoint(p31, 10, YELLOW);
+	anchorPoint11 = new AnchorPoint(p32, 11, YELLOW);
+	anchorPoint12 = new AnchorPoint(p33, 12, RED);
+	anchorPoint13 = new AnchorPoint(p41, 13, YELLOW);
+	anchorPoint14 = new AnchorPoint(p42, 14, YELLOW);
+	anchorPoint15 = new AnchorPoint(p43, 15, RED);
+	anchorPoint16 = new AnchorPoint(p51, 16, YELLOW);
+	anchorPoint17 = new AnchorPoint(p52, 17, YELLOW);
+	anchorPoint18 = new AnchorPoint(p53, 18, RED);
+	anchorPoint19 = new AnchorPoint(p61, 19, YELLOW);
+	anchorPoint20 = new AnchorPoint(p62, 20, YELLOW);
+	anchorPoint21 = new AnchorPoint(p63, 21, RED);
+	anchorPoint22 = new AnchorPoint(p71, 22, YELLOW);
+	anchorPoint23 = new AnchorPoint(p72, 23, YELLOW);
+	anchorPoint24 = new AnchorPoint(p73, 24, RED);
+	anchorPoint25 = new AnchorPoint(p81, 25, YELLOW);
+	anchorPoint26 = new AnchorPoint(p82, 26, YELLOW);
+	anchorPoint27 = new AnchorPoint(p83, 27, RED);
+	anchorPoint28 = new AnchorPoint(p91, 28, YELLOW);
+	anchorPoint29 = new AnchorPoint(p92, 29, YELLOW);
+
+	points.push_back(anchorPoint0);
+	points.push_back(anchorPoint1);
+	points.push_back(anchorPoint2);
+	points.push_back(anchorPoint3);
+	points.push_back(anchorPoint4);
+	points.push_back(anchorPoint5);
+	points.push_back(anchorPoint6);
+	points.push_back(anchorPoint7);
+	points.push_back(anchorPoint8);
+	points.push_back(anchorPoint9);
+	points.push_back(anchorPoint10);
+	points.push_back(anchorPoint11);
+	points.push_back(anchorPoint12);
+	points.push_back(anchorPoint13);
+	points.push_back(anchorPoint14);
+	points.push_back(anchorPoint15);
+	points.push_back(anchorPoint16);
+	points.push_back(anchorPoint17);
+	points.push_back(anchorPoint18);
+	points.push_back(anchorPoint19);
+	points.push_back(anchorPoint20);
+	points.push_back(anchorPoint21);
+	points.push_back(anchorPoint22);
+	points.push_back(anchorPoint23);
+	points.push_back(anchorPoint24);
+	points.push_back(anchorPoint25);
+	points.push_back(anchorPoint26);
+	points.push_back(anchorPoint27);
+	points.push_back(anchorPoint28);
+	points.push_back(anchorPoint29);
+
+	anchorLines0 = new AnchorLines(p92, p01);
+	anchorLines1 = new AnchorLines(p02, p11);
+	anchorLines2 = new AnchorLines(p12, p21);
+	anchorLines3 = new AnchorLines(p22, p31);
+	anchorLines4 = new AnchorLines(p32, p41);
+	anchorLines5 = new AnchorLines(p42, p51);
+	anchorLines6 = new AnchorLines(p52, p61);
+	anchorLines7 = new AnchorLines(p62, p71);
+	anchorLines8 = new AnchorLines(p72, p81);
+	anchorLines9 = new AnchorLines(p82, p91);
+
+	lines.push_back(anchorLines0);
+	lines.push_back(anchorLines1);
+	lines.push_back(anchorLines2);
+	lines.push_back(anchorLines3);
+	lines.push_back(anchorLines4);
+	lines.push_back(anchorLines5);
+	lines.push_back(anchorLines6);
+	lines.push_back(anchorLines7);
+	lines.push_back(anchorLines8);
+	lines.push_back(anchorLines9);
 
 	// Load the shader program. Make sure you have the correct filepath up top
 	shaderProgram = LoadShaders(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
 	skyboxShaderProgram = LoadShaders(SKYBOX_VERTEX_SHADER_PATH, SKYBOX_FRAGMENT_SHADER_PATH);
+	selectionShaderProgram = LoadShaders(SELECTION_VERTEX_SHADER_PATH, SELECTION_FRAGMENT_SHADER_PATH);
 
 	glm::mat4 toWorld = glm::mat4(1.0f);
 
@@ -313,8 +399,7 @@ void Window::display_callback(GLFWwindow* window)
 
 	// Use the shader of programID
 	glUseProgram(shaderProgram);
-
-	glPointSize(100.0f);
+	
 	// Render Bezier Curve
 	bezierCurve0->draw(shaderProgram);
 	bezierCurve1->draw(shaderProgram);
@@ -327,17 +412,34 @@ void Window::display_callback(GLFWwindow* window)
 	bezierCurve8->draw(shaderProgram);
 	bezierCurve9->draw(shaderProgram);
 
+	glPointSize(10.0f);
 	// Render Anchor Points
-	anchorPointsObj->draw(shaderProgram);
-	// Render Pull Points
-	pullPointsObj->draw(shaderProgram);
+	for each (AnchorPoint * point in points)
+		point->draw(shaderProgram);
 
-
+	for each (AnchorLines * line in lines)
+		line->draw(shaderProgram);
+	
+	glPointSize(1.0f);
 	
 	// Gets events, including input such as keyboard and mouse or window resizing
-	glfwPollEvents();
 	// Swap buffers
 	glfwSwapBuffers(window);
+	glfwPollEvents();
+}
+
+void Window::selectionDraw()
+{
+	// Clear the color and depth buffers
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Use the shader of programID
+	glUseProgram(selectionShaderProgram);
+
+	glPointSize(10.0f);
+	// Render Anchor Points
+	for each(AnchorPoint * point in points)
+		point->drawSelection(selectionShaderProgram);
 }
 
 void Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -470,6 +572,9 @@ void Window::cursor_position_callback(GLFWwindow* window, double xpos, double yp
 			case CAMERA:
 				translateCamera({ direction.x * m_TRANSSCALE, direction.y * m_TRANSSCALE, 0 });
 				break;
+			case SELECTION:
+				translateSelection({ direction.x * m_TRANSSCALE, direction.y * m_TRANSSCALE, 0 });
+				break;
 			}
 		}
 		break;
@@ -486,9 +591,28 @@ void Window::mouse_button_callback(GLFWwindow * window, int button, int action, 
 		glm::vec2 point = mouse_point;
 		if (button == GLFW_MOUSE_BUTTON_LEFT)
 		{
-			//Rotate mode
-			Movement = ROTATE;
-			lastPoint = trackBallMapping(point);
+
+
+			selectionDraw();
+
+			glReadPixels(point.x, height - point.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pix);
+			cout << (unsigned int) pix[0] << endl;
+
+			if ((unsigned int)pix[0] < selections.size())
+			{
+				Movement = TRANSLATE;
+				Mode = SELECTION;
+				selected = selections[(unsigned int)pix[0]];
+				
+			}
+
+			else
+			{
+				//Rotate mode
+				Movement = ROTATE;
+				Mode = CAMERA;
+				lastPoint = trackBallMapping(point);
+			}
 		}
 
 		else if (button == GLFW_MOUSE_BUTTON_RIGHT)
@@ -502,6 +626,7 @@ void Window::mouse_button_callback(GLFWwindow * window, int button, int action, 
 	else if (action == GLFW_RELEASE)
 	{
 		Movement = NONE;
+		Mode = CAMERA;
 	}
 }
 
@@ -541,6 +666,128 @@ void Window::rotateCamera(float rot_angle, glm::vec3 rotAxis) {
 
 void Window::resetCamera() {
 	V = glm::lookAt(cam_pos, cam_look_at, cam_up);	
+}
+
+//Selection transformations
+void Window::translateSelection(glm::vec3 transVec) {
+	selections[pix[0]] = glm::vec3(glm::translate(glm::mat4(1.0f), transVec) * glm::vec4(selections[pix[0]], 1.0f));
+	//update point position
+	points[pix[0]]->update(selections[pix[0]]);
+
+	if ((pix[0] + 3) % 3 == 0)
+	{
+		if (pix[0] > 0)
+		{
+			selections[pix[0] + 1] = glm::vec3(glm::translate(glm::mat4(1.0f), transVec) * glm::vec4(selections[pix[0] + 1], 1.0f));
+			points[pix[0] + 1]->update(selections[pix[0] + 1]);
+			selections[pix[0] - 1] = glm::vec3(glm::translate(glm::mat4(1.0f), transVec) * glm::vec4(selections[pix[0] - 1], 1.0f));
+			points[pix[0] - 1]->update(selections[pix[0] - 1]);
+			lines[pix[0] / 3]->update(selections[pix[0] + 1], selections[pix[0] - 1]);
+		}
+		else
+		{
+			selections[pix[0] + 1] = glm::vec3(glm::translate(glm::mat4(1.0f), transVec) * glm::vec4(selections[pix[0] + 1], 1.0f));
+			points[pix[0] + 1]->update(selections[pix[0] + 1]);
+			selections[selections.size() - 1] = glm::vec3(glm::translate(glm::mat4(1.0f), transVec) * glm::vec4(selections[selections.size() - 1], 1.0f));
+			points[selections.size() - 1]->update(selections[selections.size() - 1]);
+			lines[pix[0] / 3]->update(selections[pix[0] + 1], selections[selections.size() -1]);
+		}
+	}
+	else
+	{
+		if (((pix[0] * 2) + 2) % 6 == 0)
+		{
+			if (pix[0] < selections.size() - 1)
+			{
+				selections[pix[0] + 2] = glm::vec3(glm::translate(glm::mat4(1.0f), -transVec) * glm::vec4(selections[pix[0] + 2], 1.0f));
+				points[pix[0] + 2]->update(selections[pix[0] + 2]);
+				lines[(pix[0] + 3) / 3]->update(selections[pix[0]], selections[pix[0] + 2]);
+			}
+			else
+			{
+				selections[1] = glm::vec3(glm::translate(glm::mat4(1.0f), -transVec) * glm::vec4(selections[1], 1.0f));
+				points[1]->update(selections[1]);
+				lines[0]->update(selections[pix[0]], selections[1]);
+			}
+		}
+		else
+		{
+			if (pix[0] > 1)
+			{
+				selections[pix[0] - 2] = glm::vec3(glm::translate(glm::mat4(1.0f), -transVec) * glm::vec4(selections[pix[0] - 2], 1.0f));
+				points[pix[0] - 2]->update(selections[pix[0] - 2]);
+				lines[(pix[0]) / 3]->update(selections[pix[0]], selections[pix[0] - 2]);
+			}
+			else
+			{
+				selections[selections.size() -1] = glm::vec3(glm::translate(glm::mat4(1.0f), -transVec) * glm::vec4(selections[selections.size() -1], 1.0f));
+				points[selections.size() -1]->update(selections[selections.size() -1]);
+				lines[0]->update(selections[pix[0]], selections[selections.size() -1]);
+			}
+		}
+	}
+	//recalculate curves
+	ret = findPointsInCurve(pix[0] / 3);
+	curves[pix[0] / 3]->update(ret);
+
+	if((pix[0] + 3) % 3 == 0)
+	{
+		if ((pix[0] - 3 / 3) > 0)
+		{
+			ret = findPointsInCurve((pix[0] - 3) / 3);
+			curves[(pix[0] - 3) / 3]->update(ret);
+		}
+
+		else
+		{
+			ret = findPointsInCurve(curves.size() - 1);
+			curves[(curves.size() - 1)]->update(ret);
+		}
+	}
+	else
+	{
+		if (((pix[0] * 2) + 2) % 6 == 0)
+		{
+			if (pix[0] < selections.size() - 1)
+			{
+				ret = findPointsInCurve((pix[0] + 3) / 3);
+				curves[(pix[0] + 3) / 3]->update(ret);
+			}
+			else
+			{
+				ret = findPointsInCurve(0);
+				curves[0]->update(ret);
+			}
+		}
+		else
+		{
+			if (pix[0] > 1)
+			{
+				ret = findPointsInCurve((pix[0] - 3) / 3);
+				curves[(pix[0] - 3) / 3]->update(ret);
+			}
+			else
+			{
+				ret = findPointsInCurve(curves.size() -1);
+				curves[curves.size() -1]->update(ret);
+			}
+		}
+	}
+}
+
+void Window::remakePoints() {
+	//Anchor Points
+
+}
+
+glm::mat4x3 Window::findPointsInCurve(unsigned int curveNum) {
+
+	if ((((curveNum) * 3) + 3) < selections.size())
+		ret = { selections[((curveNum) * 3) + 0], selections[((curveNum) * 3) + 1], selections[((curveNum) * 3) + 2], selections[((curveNum) * 3) + 3] };
+	else 
+		ret = { selections[((curveNum) * 3) + 0], selections[((curveNum) * 3) + 1], selections[((curveNum) * 3) + 2], selections[0] };
+	
+	return ret;
 }
 
 void Window::printMatrix(glm::mat4x3 mat) {
