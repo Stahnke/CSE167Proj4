@@ -22,25 +22,27 @@
     <ClInclude Include="..\AnchorLines.h" />
     <ClInclude Include="..\AnchorPoint.h" />
     <ClInclude Include="..\BezierCurve.h" />
-    <ClInclude Include="..\Cube.h" />
     <ClInclude Include="..\main.h" />
-    <ClInclude Include="..\PullPoint.h" />
+    <ClInclude Include="..\OBJObject.h" />
     <ClInclude Include="..\shader.h" />
     <ClInclude Include="..\Skybox.h" />
+    <ClInclude Include="..\Sphere.h" />
     <ClInclude Include="..\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AnchorLines.cpp" />
     <ClCompile Include="..\AnchorPoint.cpp" />
     <ClCompile Include="..\BezierCurve.cpp" />
-    <ClCompile Include="..\Cube.cpp" />
     <ClCompile Include="..\main.cpp" />
-    <ClCompile Include="..\PullPoint.cpp" />
+    <ClCompile Include="..\OBJObject.cpp" />
     <ClCompile Include="..\shader.cpp" />
     <ClCompile Include="..\Skybox.cpp" />
+    <ClCompile Include="..\Sphere.cpp" />
     <ClCompile Include="..\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\environmentShader.frag" />
+    <None Include="..\environmentShader.vert" />
     <None Include="..\selectionShader.frag" />
     <None Include="..\selectionShader.vert" />
     <None Include="..\shader.frag" />

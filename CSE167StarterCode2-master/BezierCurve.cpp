@@ -61,13 +61,13 @@ BezierCurve::~BezierCurve()
 
 void BezierCurve::draw(GLuint shaderProgram)
 { 
-	glm::mat4 modelview = Window::V * toWorld;	
-
 	uProjection = glGetUniformLocation(shaderProgram, "projection");
-	uModelview = glGetUniformLocation(shaderProgram, "modelview");
-	
+	uModel = glGetUniformLocation(shaderProgram, "model");
+	uView = glGetUniformLocation(shaderProgram, "view");
+	// Now send these values to the shader program
 	glUniformMatrix4fv(uProjection, 1, GL_FALSE, &Window::P[0][0]);
-	glUniformMatrix4fv(uModelview, 1, GL_FALSE, &modelview[0][0]);
+	glUniformMatrix4fv(uModel, 1, GL_FALSE, &toWorld[0][0]);
+	glUniformMatrix4fv(uView, 1, GL_FALSE, &Window::V[0][0]);;
 
 	GLuint uColorLoc = glGetUniformLocation(shaderProgram, "myColor");
 	glUniform3f(uColorLoc, color.x, color.y, color.z);

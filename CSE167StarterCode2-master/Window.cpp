@@ -3,7 +3,8 @@
 const char* window_title = "GLFW Starter Project";
 
 Skybox * skybox;
-Cube * cube;
+Sphere * sphere;
+
 BezierCurve * bezierCurve0, * bezierCurve1, * bezierCurve2, * bezierCurve3, * bezierCurve4, * bezierCurve5;
 BezierCurve * bezierCurve6, * bezierCurve7, * bezierCurve8, * bezierCurve9;
 AnchorPoint * anchorPoint0, * anchorPoint1, * anchorPoint2, * anchorPoint3, * anchorPoint4, * anchorPoint5;
@@ -24,6 +25,7 @@ float maxHeight = std::numeric_limits<int>::min();
 float currentHeight = std::numeric_limits<int>::min();
 float maxT = 0.0f;
 float currentT = 0.0f;
+bool pause = false;
 
 glm::mat4x3 ret;
 
@@ -49,6 +51,7 @@ glm::vec3 selected;
 GLint shaderProgram;
 GLint skyboxShaderProgram;
 GLint selectionShaderProgram;
+GLint environmentShaderProgram;
 
 // On some systems you need to change this to the absolute path
 #define VERTEX_SHADER_PATH "../shader.vert"
@@ -59,6 +62,9 @@ GLint selectionShaderProgram;
 
 #define SELECTION_VERTEX_SHADER_PATH "../selectionShader.vert"
 #define SELECTION_FRAGMENT_SHADER_PATH "../selectionShader.frag"
+
+#define ENVIRONMENT_VERTEX_SHADER_PATH "../environmentShader.vert"
+#define ENVIRONMENT_FRAGMENT_SHADER_PATH "../environmentShader.frag"
 
 // Default camera parameters
 glm::vec3 cam_pos(0.0f, 0.0f, 20.0f);		// e  | Position of camera
@@ -326,15 +332,16 @@ void Window::initialize_objects()
 	//TODO:
 	currentHeight = maxHeight;
 	currentT = maxT;
-	cube = new Cube();
+	sphere = new Sphere();
 	glm::vec3 newPoint = curves[(int)maxT]->calcBezierPoint(maxT - (int)maxT);
-	cube->setPosition(newPoint);
+	sphere->setPosition(newPoint);
 	
 
 	// Load the shader program. Make sure you have the correct filepath up top
 	shaderProgram = LoadShaders(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
 	skyboxShaderProgram = LoadShaders(SKYBOX_VERTEX_SHADER_PATH, SKYBOX_FRAGMENT_SHADER_PATH);
 	selectionShaderProgram = LoadShaders(SELECTION_VERTEX_SHADER_PATH, SELECTION_FRAGMENT_SHADER_PATH);
+	environmentShaderProgram = LoadShaders(ENVIRONMENT_VERTEX_SHADER_PATH, ENVIRONMENT_FRAGMENT_SHADER_PATH);
 
 	glm::mat4 toWorld = glm::mat4(1.0f);
 
@@ -412,22 +419,25 @@ void Window::resize_callback(GLFWwindow* window, int width, int height)
 
 void Window::idle_callback()
 {
-	
-	//Update the position of the cube
-	float v = std::sqrt(((-2) * a * (currentHeight - maxHeight))) + c;
-	if (currentHeight - maxHeight > 0)
+	if (pause == false)
 	{
-		//cout << "CALCULATION ERROR" << endl;
-		v = 0 + c;
-	}
+		//Update the position of the sphere
+		float v = std::sqrt(((-2) * a * (currentHeight - maxHeight))) + c;
+		if (currentHeight - maxHeight > 0)
+		{
+			//cout << "CALCULATION ERROR" << endl;
+			v = 0 + c;
+		}
 
-	currentT += v;
-	if (currentT > curves.size() || currentT < 0)
-		currentT = 0;
-	//cout << currentT << endl;
-	glm::vec3 newPoint = curves[(int)currentT]->calcBezierPoint(currentT - (int)currentT);
-	currentHeight = newPoint.y;
-	cube->setPosition(newPoint);
+		currentT += v;
+		if (currentT > curves.size() || currentT < 0)
+			currentT = 0;
+		//cout << currentT << endl;
+		glm::vec3 newPoint = curves[(int)currentT]->calcBezierPoint(currentT - (int)currentT);
+		currentHeight = newPoint.y;
+		sphere->setPosition(newPoint);
+	}
+	
 }
 
 void Window::display_callback(GLFWwindow* window)
@@ -446,28 +456,22 @@ void Window::display_callback(GLFWwindow* window)
 	glUseProgram(shaderProgram);
 	
 	// Render Bezier Curve
-	bezierCurve0->draw(shaderProgram);
-	bezierCurve1->draw(shaderProgram);
-	bezierCurve2->draw(shaderProgram);
-	bezierCurve3->draw(shaderProgram);
-	bezierCurve4->draw(shaderProgram);
-	bezierCurve5->draw(shaderProgram);
-	bezierCurve6->draw(shaderProgram);
-	bezierCurve7->draw(shaderProgram);
-	bezierCurve8->draw(shaderProgram);
-	bezierCurve9->draw(shaderProgram);
+	for each (BezierCurve * curve in curves)
+		curve->draw(shaderProgram);
 
 	glPointSize(10.0f);
 	// Render Anchor Points
 	for each (AnchorPoint * point in points)
 		point->draw(shaderProgram);
+	glPointSize(1.0f);
 
+	//Render lines
 	for each (AnchorLines * line in lines)
 		line->draw(shaderProgram);
 
-	cube->draw(shaderProgram);
-	
-	glPointSize(1.0f);
+	glUseProgram(environmentShaderProgram);
+	//Render roller coaster sphere
+	sphere->draw(environmentShaderProgram);
 	
 	// Gets events, including input such as keyboard and mouse or window resizing
 	// Swap buffers
@@ -516,6 +520,22 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 		else if (key == GLFW_KEY_1)
 		{
 			Mode = CAMERA;
+		}
+
+		else if (key == GLFW_KEY_P)
+		{
+			if (mods == GLFW_MOD_SHIFT)
+				pause = true;
+			else
+				pause = false;
+		}
+
+		else if (key == GLFW_KEY_M)
+		{
+			glm::vec3 newPoint = curves[(int)maxT]->calcBezierPoint(maxT - (int)maxT);
+			currentHeight = newPoint.y;
+			currentT = maxT;
+			sphere->setPosition(newPoint);
 		}
 	}
 
@@ -832,6 +852,9 @@ void Window::translateSelection(glm::vec3 transVec) {
 		}
 		i++;
 	}
+	glm::vec3 newPoint = curves[(int)currentT]->calcBezierPoint(currentT - (int)currentT);
+	currentHeight = newPoint.y;
+	sphere->setPosition(newPoint);
 	//cout <<"MaxHeight = " << maxHeight << "@ " << maxT << endl;
 }
 

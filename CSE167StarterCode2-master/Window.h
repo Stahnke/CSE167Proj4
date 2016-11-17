@@ -10,7 +10,7 @@
 #include <GL/glew.h>
 #endif
 #include <GLFW/glfw3.h>
-#include "Cube.h"
+#include "Sphere.h"
 #include "Skybox.h"
 #include "shader.h"
 #include "BezierCurve.h"

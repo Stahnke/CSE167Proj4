@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Cube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -36,18 +33,18 @@
     <ClInclude Include="..\AnchorPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\PullPoint.h">
+    <ClInclude Include="..\AnchorLines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\AnchorLines.h">
+    <ClInclude Include="..\Sphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\OBJObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Skybox.cpp">
@@ -65,10 +62,13 @@
     <ClCompile Include="..\AnchorPoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\PullPoint.cpp">
+    <ClCompile Include="..\AnchorLines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\AnchorLines.cpp">
+    <ClCompile Include="..\Sphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\OBJObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -90,6 +90,12 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="..\selectionShader.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\environmentShader.vert">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="..\environmentShader.frag">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

@@ -34,7 +34,7 @@ public:
 
 	// These variables are needed for the shader program
 	GLuint bezierVBO, bezierVAO, bezierEBO;
-	GLuint uProjection, uModelview;
+	GLuint uProjection, uModel, uView;
 
 	//Bezier vars
 	glm::mat4x3 controlPts;
