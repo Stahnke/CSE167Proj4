@@ -4,6 +4,7 @@ const char* window_title = "GLFW Starter Project";
 
 Skybox * skybox;
 Sphere * sphere;
+OBJObject * object;
 
 BezierCurve * bezierCurve0, * bezierCurve1, * bezierCurve2, * bezierCurve3, * bezierCurve4, * bezierCurve5;
 BezierCurve * bezierCurve6, * bezierCurve7, * bezierCurve8, * bezierCurve9;
@@ -32,8 +33,12 @@ glm::mat4x3 ret;
 const unsigned int RED = 0;
 const unsigned int YELLOW = 1;
 
+unsigned int CartType = 0;
+const unsigned int SPHERE = 0;
+const unsigned int OBJECT = 1;
+
 //Vars for bezier curves
-const unsigned int N = 150;
+const unsigned int N = 10;
 glm::vec3 p00, p01, p02, p03;
 glm::vec3 p11, p12, p13;
 glm::vec3 p21, p22, p23;
@@ -101,7 +106,7 @@ const int ROTATE = 1;
 const int TRANSLATE = 2;
 const float m_ROTSCALE = 1.0f;
 const float m_ZOOMSCALE = 1.0f;
-const float m_TRANSSCALE = 0.1f;
+const float m_TRANSSCALE = 0.3f;
 
 int Mode = 1;
 const int CAMERA = 1;
@@ -333,8 +338,10 @@ void Window::initialize_objects()
 	currentHeight = maxHeight;
 	currentT = maxT;
 	sphere = new Sphere();
+	object = new OBJObject("C:\\Users\\Ty\\Documents\\School\\FA 16\\CSE 167\\Proj4\\CSE167StarterCode2-master\\myResources\\pod.obj");
 	glm::vec3 newPoint = curves[(int)maxT]->calcBezierPoint(maxT - (int)maxT);
 	sphere->setPosition(newPoint);
+	object->initPosition(newPoint);
 	
 
 	// Load the shader program. Make sure you have the correct filepath up top
@@ -435,7 +442,10 @@ void Window::idle_callback()
 		//cout << currentT << endl;
 		glm::vec3 newPoint = curves[(int)currentT]->calcBezierPoint(currentT - (int)currentT);
 		currentHeight = newPoint.y;
+		
 		sphere->setPosition(newPoint);
+		object->setPosition(newPoint);
+
 	}
 	
 }
@@ -471,7 +481,13 @@ void Window::display_callback(GLFWwindow* window)
 
 	glUseProgram(environmentShaderProgram);
 	//Render roller coaster sphere
-	sphere->draw(environmentShaderProgram);
+	switch (CartType) 
+	{
+	case(SPHERE): sphere->draw(environmentShaderProgram);
+		break;
+	case(OBJECT): object->draw(environmentShaderProgram);
+		break;
+	}
 	
 	// Gets events, including input such as keyboard and mouse or window resizing
 	// Swap buffers
@@ -536,6 +552,16 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 			currentHeight = newPoint.y;
 			currentT = maxT;
 			sphere->setPosition(newPoint);
+		}
+
+		else if (key == GLFW_KEY_2)
+		{
+			CartType = SPHERE;
+		}
+
+		else if (key == GLFW_KEY_3)
+		{
+			CartType = OBJECT;
 		}
 	}
 
@@ -627,12 +653,12 @@ void Window::cursor_position_callback(GLFWwindow* window, double xpos, double yp
 	case TRANSLATE:
 	{
 		curPoint = trackBallMapping(mouse_point);
-
 		//Get the translation vector
 		direction = curPoint - lastPoint;
 		float velocity = glm::length(direction);
 		if (velocity > 0.0001) // If little movement - do nothing.
 		{
+
 			//Apply the translation
 			switch (Mode)
 			{
@@ -656,6 +682,7 @@ void Window::mouse_button_callback(GLFWwindow * window, int button, int action, 
 	if (action == GLFW_PRESS)
 	{
 		glm::vec2 point = mouse_point;
+
 		if (button == GLFW_MOUSE_BUTTON_LEFT)
 		{
 
@@ -670,6 +697,7 @@ void Window::mouse_button_callback(GLFWwindow * window, int button, int action, 
 				Movement = TRANSLATE;
 				Mode = SELECTION;
 				selected = selections[(unsigned int)pix[0]];
+				lastPoint = trackBallMapping(point);
 				
 			}
 
@@ -854,7 +882,10 @@ void Window::translateSelection(glm::vec3 transVec) {
 	}
 	glm::vec3 newPoint = curves[(int)currentT]->calcBezierPoint(currentT - (int)currentT);
 	currentHeight = newPoint.y;
+
 	sphere->setPosition(newPoint);
+	object->setPosition(newPoint);
+
 	//cout <<"MaxHeight = " << maxHeight << "@ " << maxT << endl;
 }
 

@@ -1,8 +1,12 @@
 #include "OBJObject.h"
 #include "Window.h"
 
-OBJObject::OBJObject(const char * filePath, vector<glm::vec3> materialData, float shininess)
+OBJObject::OBJObject(const char * filePath)
 {
+
+	forward_vec = { 0.0f,0.0f,1.0f,0.0f };
+	theta = 0.0f;
+
 	toWorld = glm::mat4(1.0f);
 
 	parse1(filePath);
@@ -73,12 +77,12 @@ void OBJObject::draw(GLuint shaderProgram)
 	// Consequently, we need to forward the projection, view, and model matrices to the shader programs
 	// Get the location of the uniform variables "projection" and "modelview"
 	uProjection = glGetUniformLocation(shaderProgram, "projection");
-	uModelview = glGetUniformLocation(shaderProgram, "modelview");
-	uNormalModelView = glGetUniformLocation(shaderProgram, "normalModelView");
+	uModel = glGetUniformLocation(shaderProgram, "model");
+	uView = glGetUniformLocation(shaderProgram, "view");
 	// Now send these values to the shader program
 	glUniformMatrix4fv(uProjection, 1, GL_FALSE, &Window::P[0][0]);
-	glUniformMatrix4fv(uModelview, 1, GL_FALSE, &modelview[0][0]);
-	glUniformMatrix4fv(uNormalModelView, 1, GL_FALSE, &normalToWorld[0][0]);
+	glUniformMatrix4fv(uModel, 1, GL_FALSE, &toWorld[0][0]);
+	glUniformMatrix4fv(uView, 1, GL_FALSE, &Window::V[0][0]);
 
 	// Now draw the OBJObject. We simply need to bind the VAO associated with it.
 	glBindVertexArray(VAO);
@@ -280,3 +284,52 @@ float OBJObject::getPointSize() {
 	return size;
 }
 
+void OBJObject::initPosition(glm::vec3 position) {
+	currentPos = position;
+	toWorld = glm::translate(glm::mat4(1.0f), position);
+}
+
+void OBJObject::setPosition(glm::vec3 position)
+{
+	//Calculate the next forward vector
+	//Get angle between the current and next forward vector
+	newForward_vec = glm::vec4{position - currentPos, 0.0f };
+	glm::vec4 cur_xz_vec = glm::vec4{ forward_vec.x, 0.0f, forward_vec.z, 0.0f };
+	glm::vec4 new_xz_vec = glm::vec4{ newForward_vec.x, 0.0f, newForward_vec.z, 0.0f };
+	float len_cur_xz = glm::sqrt(glm::pow(cur_xz_vec.x, 2) + glm::pow(cur_xz_vec.y, 2) + glm::pow(cur_xz_vec.z, 2));
+	float len_new_xz = glm::sqrt(glm::pow(new_xz_vec.x, 2) + glm::pow(new_xz_vec.y, 2) + glm::pow(new_xz_vec.z, 2));
+	float dot_vec = glm::dot(cur_xz_vec, new_xz_vec);
+	glm::vec3 cross = glm::cross(glm::vec3(cur_xz_vec), glm::vec3(new_xz_vec));
+	float normalizer = len_cur_xz * len_new_xz;
+	if (normalizer != 0) {
+		float divid = dot_vec / normalizer;
+		if (divid > 1) divid = 1;
+		if (divid < -1) divid = -1;
+		float acos = glm::acos(divid);
+
+		if (cross.y > 0)
+			theta += acos;
+		else if (cross.y < 0)
+			theta -= acos;
+
+		/*cout << "CurrentPos = " << currentPos.x << " " << currentPos.y << " " << currentPos.z << endl;
+		cout << " NewPos = " << position.x << " " << position.y << " " << position.z << endl;
+		cout << "CurrentVec = " << forward_vec.x << " " << forward_vec.y << " " << forward_vec.z << endl;
+		cout << "NewVec = " << newForward_vec.x << " " << newForward_vec.y << " " << newForward_vec.z << endl;
+		cout << len_cur_xz << endl;
+		cout << len_new_xz << endl;
+		cout << dot_vec << endl;
+		cout << normalizer << endl;
+		cout << dot_vec / normalizer << endl;
+		cout << acos << endl;
+		cout << "Theta = " << theta << endl << endl;*/
+	}
+
+
+	//set our current position/vector to the new position/vector
+	forward_vec = newForward_vec;
+	currentPos = position;
+
+	toWorld = glm::translate(glm::mat4(1.0f), position);
+	toWorld = toWorld * glm::rotate(glm::mat4(1.0f), theta, { 0.0f,1.0f,0.0f });
+}

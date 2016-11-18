@@ -48,7 +48,7 @@ private:
 	float objectSize;
 
 public:
-	OBJObject(const char *, vector<glm::vec3>, float);
+	OBJObject(const char * filePath);
 	~OBJObject();
 
 	void draw(GLuint);
@@ -56,6 +56,11 @@ public:
 	void spin(float);
 	void parse1(const char *);
 	void parse2(const char *);
+
+	glm::vec3 currentPos;
+	glm::vec4 forward_vec;
+	glm::vec4 newForward_vec;
+	float theta;
 
 	void translate(glm::vec3);
 	void resize(float);
@@ -68,9 +73,12 @@ public:
 	glm::mat4 getToWorld();
 	float getPointSize();
 
+	void setPosition(glm::vec3 position);
+	void initPosition(glm::vec3 position);
+
 	// These variables are needed for the shader program
 	GLuint VBO, VAO, EBO;
-	GLuint uProjection, uModelview, uModelColor, uNormalModelView;
+	GLuint uProjection, uModel, uModelColor, uView;
 };
 
 #endif

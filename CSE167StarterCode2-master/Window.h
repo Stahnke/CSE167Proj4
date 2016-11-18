@@ -11,6 +11,7 @@
 #endif
 #include <GLFW/glfw3.h>
 #include "Sphere.h"
+#include "OBJObject.h"
 #include "Skybox.h"
 #include "shader.h"
 #include "BezierCurve.h"
